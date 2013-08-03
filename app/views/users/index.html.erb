@@ -1,0 +1,66 @@
+<h1>Fetch User</h1>
+<input name="accessToken" id="accessToken_field" placeholder="Enter an access token"/>
+<button id="accessToken_submit">Submit</button>
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Username</th>
+    <th>Name</th>
+    <th>Gender</th>
+    <th>Hometown</th>
+    <th>Location</th>
+    <th>Bio</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @users.each do |user| %>
+  <tr>
+    <td><%= user.id %></td>
+    <td><%= user.username %></td>
+    <td><%= user.name %></td>
+    <td><%= user.gender %></td>
+    <td><%= user.hometown %></td>
+    <td><%= user.location %></td>
+    <td><%= user.bio %></td>
+    
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<script type="text/javascript">
+  $("#accessToken_submit").click(function(e){
+
+    var access_token = $("#accessToken_field").val();
+    getdetails(access_token);
+  });
+  function getdetails(access_token){
+    $.ajax({
+      url: 'https://graph.facebook.com/me?access_token=' + access_token,
+      success: function(data){
+        storedetails(data);
+      }
+    })
+  }
+  function storedetails(data){
+    var id = data.id,
+        username = data.username,
+        name = data.name,
+        gender = data.gender,
+        hometown = data.hometown.name,
+        location = data.location.name;
+
+    $.ajax({
+      url: '/users/',
+      type: 'POST',
+      data: {"user" : {id: id, username: username, name: name, gender: gender, hometown: hometown, location: location}},
+      success: function(data){
+        console.log("user details saved successfully");
+      }
+    })
+  }
+</script>
+
